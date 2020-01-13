@@ -44,25 +44,11 @@
 % Head 1
 \section{INTRODUCTION}
 
-Визуализация газовых течений. Теневые методы и проч. , книжки по теневым методам (добавить из тетрадки)
+\textcolor{red}{Визуализация газовых течений. Теневые методы и проч. , книжки по теневым методам (добавить из тетрадки).}
 
-Дифракция света на ударной волне и ударноволновых конфигурациях
+\textcolor{red}{Дифракция света на ударной волне и ударноволновых конфигурациях. Ссылки на Сыщикову (добавить их), Panda \cite{Panda_1995} (+ ещй две)}
 
-Ссылки на Сыщикову (добавить их), Panda \cite{Panda_1995} (+ ещй две)
-
-Книжка и статья Hornig'a (добавить) - отражение света от фронта ударной волны
-
-Сказать про электронный пучок как неоптический вариант визуализации (Muntz, Alsmeyer, Schmidt) 
-
-Слова про цифровую обработку и проч. 
-
-Структура плоской ударной волны 
-
-эксперимент \cite{Schmidt_1969, Alsmeyer_1976, Pham-Van-Diep624}, 
-
-аналитика \cite{Becker_1922, Mott-Smith_1951, Salwen_1964}, 
-
-численные расчёты \cite{Kogan, Dodulad_Tcheremissine_2013, Rykov2008, ShockWaves_2015, Struchtrup_Torrilhon_2004, overshoot_2015} 
+\textcolor{red}{Книжка и статья Hornig'a (добавить) - отражение света от фронта ударной волны}
 
 Optical methods of gas-dynamic flow visualization are based on a change in the optical path of light through inhomogeneities in the density of a transparent medium. Such optical methods include shadowgraph, schlieren, and interferometric methods \cite{}. Shadowgraph methods are most often used to visualize shock waves and to experimentally analyze shock-wave configurations \cite{}. At the same time, usually the aim of applying this approach is to fix the positions of the shock waves. 
 
@@ -77,54 +63,51 @@ It is well-known fact that for sufficiently dilute gases the shock-wave thicknes
 The values of the amplitude and phase are first determined at equidistant points immediately after the passage of the diffraction object. These points, by virtue of the Huygens-Fresnel principle, will be sources of secondary waves, the result of which is summed up at each observation point in accordance with their optical paths. Due to the one-dimensionality of the shock wave, cylindrical waves are used instead of spherical ones.
 
 \begin{figure}
-    \centerline{\includegraphics[width=160pt]{figures/fig1.png}}
-\caption{ПЕРЕДЕЛАТЬ}
-\label{fig1}
+\begin{tabular}{cc}
+    {\includegraphics[width=160pt]{figures/fig1.png}}
+    &{\includegraphics[width=160pt]{figures/fig3.png}}\\ a&b
+\end{tabular}
+\caption{\textcolor{red}{ПЕРЕДЕЛАТЬ}}
+\label{Formulation}
 \end{figure}
 
-In the plane of the object $z=0$, according to the Fig. \ref{fig1}, the density of the source points is more than 100 points per millimeter. Thus, with the assumed incident width, 50 mm plane wavefront, and distance $z_0 = 2$ m, more than two reference points are taken into account even in the outermost Fresnel zone. The complex amplitude $\overline{A}_p$ at the point $P{(x_p, z_0)}$ on the screen at the distance of $z_0$ from the plane of the object is calculated by the formula:
+In the plane of the object $z=0$, according to the Fig. \ref{Formulation} a, the density of the source points is more than 100 points per millimeter. Thus, with the assumed incident width, 50 mm plane wavefront, and distance $z_0 = 2$ m, more than two reference points are taken into account even in the outermost Fresnel zone. The complex amplitude $\overline{A}_p$ at the point $P{(x_p, z_0)}$ on the screen at the distance of $z_0$ from the plane of the object is calculated by the formula:
 \begin{equation}
 \overline{A}_p = \sum_{j=1}^{n} A_j \left(\frac{z_0}{r_j} \right)^{1/2} \exp \left(i \frac{2\pi}{\lambda} \left(r_j - z_0\right) + \Phi_j\right)
 \end{equation}
 where $n$ is the number of source points, $A_j$ is the magnitude of the amplitude at the $j$-th point, $\Phi_j$ is the initial phase at the $j$-th point and $\lambda$ is the light wavelength. $r_j$ is  defined as: $r_j = \left(z_0^2 + \left(x_j - x_P\right)^2\right)^{1/2}$. $x_j$ is the current coordinate at the plane near the diffraction object.
 
-Написать про $Cos^2$ Fig. \ref{fig3}
+\textcolor{red}{Написать про $Cos^2$} Fig. \ref{Formulation} b.
 
 As a validation of the numerical implementation the method, initially the test and experimental results from \cite{Pfeifer} were exactly reproduced.
 
 
-Далее получение профиля плотности --> определение показателя преломления --> определение разности фаз для задания начальных данных
-
-\begin{figure}
-    \centerline{\includegraphics[width=160pt]{figures/fig3.png}}
-\caption{ПЕРЕДЕЛАТЬ}
-\label{fig3}
-\end{figure}
+\textcolor{red}{Далее получение профиля плотности --> определение показателя преломления --> определение разности фаз для задания начальных данных}
 
 \subsection{EXPERIMENTAL SETUP}
 
-Описание из диссертации Орлова 2010 года
+\textcolor{red}{Описание из диссертации Орлова 2010 года}
 
 \section{RESULTS}
 
 \subsection{Experimental case}
 
-In Fig. \ref{Experiment_Ma2p1} a presents a shadow photograph obtained using the experimental setup described above. The shock wave moves from left to right. The pressure and temperature in front of the shock wave on the right are $p_0=25$ Torr and $T_0=293$ K, respectively. The Mach number of the shock wave is $Ma=2.1$. Fig. \ref{Experiment_Ma2p1} b shows the distribution of light intensity in an experiment obtained from \ ref {}.
+In Fig. \ref{Experiment_Ma2p1} a presents a shadow photograph obtained using the experimental setup described above. The shock wave moves from left to right. The pressure and temperature in front of the shock wave on the right are $p_0=25$ Torr and $T_0=293$ K, respectively. The Mach number of the shock wave is $Ma=2.1$. Fig. \ref{Experiment_Ma2p1} b shows the distribution of light intensity in the experiment obtained from \ref{Experiment_Ma2p1} a.
 
 \begin{figure}
 \begin{tabular}{cc}
-    {\includegraphics[width=185pt]{figures/Experiment_Ma2p1.jpg}}
-    &{\includegraphics[width=185pt]{ numerical method}}\\ a&b
+    {\includegraphics[width=185pt, height=100pt]{figures/Experiment_Ma2p1_foto.jpg}}
+    &{\includegraphics[width=185pt,height=100pt]{figures/2b.png}}\\ a&b
 \end{tabular}
-\caption{The shadowgraph image for $Ma=2.1$, $p_0=25$ Torr and $T_0=293$ K (a) intensity distribution.}
+\caption{The shadowgraph image for $Ma=2.1$, $p_0=25$ Torr and $T_0=293$ K (a) and its intensity distribution {b}.}
 \label{Experiment_Ma2p1}
 \end{figure}
 
-Сравнение с экспериментальной картинкой 
+
 
 \subsection{The dependence on shock thickness}
 
-Несколько картинок при одном и том же значении числа Маха (?). Лучше для двух (слабая и сильная ударные волны). Одна экспериментальная с $Ma=2.1$ и какой-нибудь $Ma=8.0$.
+\textcolor{red}{Несколько картинок при одном и том же значении числа Маха (?). Лучше для двух (слабая и сильная ударные волны). Одна экспериментальная с $Ma=2.1$ и какой-нибудь $Ma=8.0$.}
 
 Итоговые графики, иллюстрирующие зависимость от длины свободного пробега --> толщины.
 
