@@ -1,17 +1,20 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib
-matplotlib.use('GTK3Cairo')
 import scipy.interpolate as inter
 scaling = 10
 NS_density = open ("/home/mikhail/Diffraction/NS_density.dat")
+
+
 def n(x):
     b = 0.000014*scaling
-    return n_polyn(-1.393000002*scaling) if x<=-b else n_polyn(b) if x>=b else n_polyn(x)
+    return n_polyn(-1.393000002*scaling) if x <= -b else n_polyn(b) if x >= b else n_polyn(x)
 x_den = np.array([])
+
+
 def n_dash(x):
     b = 1.39*1E-5*scaling
-    return n_dash_polyn(-1.39*1E-5*scaling) if x<=-b else n_dash_polyn(1.39*1E-5*scaling) if x>=b else n_dash_polyn(x)
+    return n_dash_polyn(-1.39*1E-5*scaling) if x <= -b else n_dash_polyn(1.39*1E-5*scaling) if x >= b else n_dash_polyn(x)
+
 
 m = 1000
 n_polyn = np.array([])
@@ -21,13 +24,13 @@ with open('NS_density.dat') as f:
     for line in f:
         temp_x, temp_y = [float(x) for x in line.split()] 
         x_den = np.append(x_den,scaling*temp_x)
-        n_polyn = np.append(n_polyn,0.039*temp_y);
+        n_polyn = np.append(n_polyn,0.039*temp_y)
 Ta = 293.0
 
 
 R = 8.31144598/0.029
 Width = 0.048
-dz = Width / m;
+dz = Width / m
 n_polyn = 1 + 2.27*np.power(10., -4)*n_polyn
 n_dash_polyn = np.diff(n_polyn)/np.diff(x_den)
 
@@ -55,7 +58,7 @@ for j,x0 in enumerate(X):
     x_temp = x0 
     x[0] = x0
     l = 0
-    #tg[j,0] = x0/0.01
+    tg[j,0] = x0/0.019
     for i in range(1,m+1):
         tgA[i] = 1/n(x_temp) * n_dash(x_temp) * dz
         tg[j,i] = tgA[i]+tg[j,i-1]
