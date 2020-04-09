@@ -1,6 +1,2 @@
-*.gz
-*.pdf
-*.blg
-*.bbl
-*.aux
-*.log
+venv
+.idea
