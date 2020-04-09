@@ -138,7 +138,7 @@ ax.set(title='Light trajectories')
 fig.savefig(path + 'light_trajectories.png')
 
 #
-# Mathematica code rewritten:
+# Mathematica code rewritten:
 #
 
 
