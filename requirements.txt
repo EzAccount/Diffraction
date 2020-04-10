@@ -1,3 +1,5 @@
 matplotlib
-scipy
+numba
 numpy
+scipy
+tqdm
