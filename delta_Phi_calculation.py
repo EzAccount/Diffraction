@@ -7,7 +7,6 @@ from datetime import datetime
 from tqdm import tqdm
 import constants as c
 
-NS_density = open(c.density_path)
 
 x_den = np.array([])
 
@@ -24,11 +23,11 @@ def n_dash(x):
 
 
 def n_time(x):
-    return (n(x) + n(x + 4E6)) / 2
+    return n(x+4E-6)
 
 
 def n_dash_time(x):
-    return (n_dash(x) + n_dash(x + 4E6)) / 2
+    return n_dash(x+4E-6)
 
 
 def r(i1, x1):
@@ -36,7 +35,7 @@ def r(i1, x1):
 
 
 @njit(parallel=True)
-def Vectorizing_sum(v_Re, v_Im):
+def vectorizing_sum(v_Re, v_Im):
     Re = v_Re.sum()
     Im = v_Im.sum()
     return Re * Re + Im * Im
@@ -46,7 +45,7 @@ def Results(x):
     for d, v0 in enumerate(vectorize_sum_Re):
         vectorize_sum_Re[d] = A(X[d]) * np.power(c.z0 / r(d, x), 0.5) * np.cos(2 * np.pi / c.lam * (r(d, x) - c.z0) + dPhi[d])
         vectorize_sum_Im[d] = A(X[d]) * np.power(c.z0 / r(d, x), 0.5) * np.sin(2 * np.pi / c.lam * (r(d, x) - c.z0) + dPhi[d])
-    return Vectorizing_sum(vectorize_sum_Re, vectorize_sum_Im)
+    return vectorizing_sum(vectorize_sum_Re, vectorize_sum_Im)
 
 
 def A(variable):
@@ -81,7 +80,7 @@ debug = open(path+'debug.txt', "w")
 n_polyn = np.array([])
 n_polyn_dash = np.array([])
 d_Phi = np.array([])
-with open('NS_density.dat') as f:
+with open(c.density_path) as f:
     for line in f:
         temp_x, temp_y = [float(x) for x in line.split()]
         x_den = np.append(x_den, c.scaling * temp_x)
@@ -116,7 +115,7 @@ for j in tqdm(np.arange(boundary_index, np.size(X)-boundary_index + 1, 1)):
     x_temp = X[j]
     x[0] = X[j]
     optic_length = 0
-    tg[j, 0] = (j-boundary_index) / c.diversity
+    tg[j, 0] = X[j] / c.diversity
     for i in range(1, c.m + 1):
         tgA[i] = 1 / n_time(x_temp) * n_dash_time(x_temp) * dz
         tg[j, i] = tgA[i] + tg[j, i - 1]
@@ -126,21 +125,24 @@ for j in tqdm(np.arange(boundary_index, np.size(X)-boundary_index + 1, 1)):
         x_i[j, i], z_i[j, i] = x[i], -i * dz
     dPhi[j] = 2 * np.pi * optic_length / 5320 * 1E10
     coordinate_dPhi_file.write(str(X[j]) + ' ' + str(x_i[j][c.m]) + ' ' + str(dPhi[j]) + '\n')
-
+    X[j] = x_i[j][c.m]
 
 fig, ax = plt.subplots()
 for j, x0 in enumerate(X):
     ax.plot(x_i[j], z_i[j])
 ax.set(title='Light trajectories')
 fig.savefig(path + 'light_trajectories.png')
+for j in np.arange(0, boundary_index+1, 1):
+    dPhi[j] = dPhi[boundary_index+2]
+for j in np.arange(np.size(X)-boundary_index, np.size(X), 1):
+    dPhi[j] = dPhi[np.size(X)-boundary_index-2]
 
+fig4,ax4 = plt.subplots()
+ax4.plot(X, dPhi)
+fig4.savefig(path+'dPhi.png')
 #
 #  Mathematica code rewritten:
 #
-dPhi = np.append(zero_left, dPhi)
-dPhi = np.append(dPhi, zero_right)
-x_i = np.append(x_i_left, x_i)
-x_i = np.append(x_i, x_i_right)
 
 vectorize_sum_Re = np.zeros(np.size(X))
 vectorize_sum_Im = np.zeros(np.size(X))
@@ -149,10 +151,13 @@ intensity_file = open(path + 'intensity.dat', "w")
 xp_range = np.arange(-6E-3, 6E-3, 0.02E-3)
 intensity_dat = np.array([])
 print('Summation process')
+
 for xp in tqdm(xp_range):
     intensity = Results(xp)
     intensity_dat = np.append(intensity_dat, intensity)
     intensity_file.write(str(xp) + ' ' + str(intensity)+'\n')
+
+
 fig2, ax2 = plt.subplots()
 ax2.plot(xp_range, intensity_dat)
 ax2.set(title='Diffraction')

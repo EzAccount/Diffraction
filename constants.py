@@ -10,5 +10,5 @@ scaling = 1
 boundary = 20E-6 * scaling
 step = 25E-7 * scaling
 m = 1000
-diversity = 0.20
+diversity = 0.19
 density_path = "/Users/mikhail/Diffraction/NS_density.dat"
