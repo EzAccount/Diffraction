@@ -6,51 +6,30 @@ from pathlib import Path
 from datetime import datetime
 from tqdm import tqdm
 import constants as c
-
-
-x_den = np.array([])
-
-
-def n(x):
-    b = 0.000014 * c.scaling
-    return n_polyn(-1.39 * 1E-5 * c.scaling) if x <= -b else n_polyn(b) if x >= b else n_polyn(x)
-
-
-def n_dash(x):
-    b = 1.39 * 1E-5 * c.scaling
-    return n_dash_polyn(-1.39 * 1E-5 * c.scaling) if x <= -b else n_dash_polyn(1.39 * 1E-5 * c.scaling) if x >= b \
-        else n_dash_polyn(x)
-
-
-def n_time(x):
-    return n(x+4E-6)
-
-
-def n_dash_time(x):
-    return n_dash(x+4E-6)
-
+from n_functions import *
+import light_trajectories as lt
 
 def r(i1, x1):
-    return np.sqrt(c.z0 * c.z0 + (X[i1] - x1) * (X[i1] - x1))
+    return np.sqrt(c.z0 * c.z0 + (c.X[i1] - x1) * (c.X[i1] - x1))
 
 
 @njit(parallel=True)
-def vectorizing_sum(v_Re, v_Im):
+def sum_vectorization(v_Re, v_Im):
     Re = v_Re.sum()
     Im = v_Im.sum()
     return Re * Re + Im * Im
 
 
 def Results(x):
-    for d, v0 in enumerate(vectorize_sum_Re):
-        vectorize_sum_Re[d] = A(X[d]) * np.power(c.z0 / r(d, x), 0.5) * np.cos(2 * np.pi / c.lam * (r(d, x) - c.z0) + dPhi[d])
-        vectorize_sum_Im[d] = A(X[d]) * np.power(c.z0 / r(d, x), 0.5) * np.sin(2 * np.pi / c.lam * (r(d, x) - c.z0) + dPhi[d])
-    return vectorizing_sum(vectorize_sum_Re, vectorize_sum_Im)
+    for d, v0 in enumerate(vectorized_sum_Re):
+        vectorized_sum_Re[d] = A(c.X[d]) * np.power(c.z0 / r(d, x), 0.5) * np.cos(2 * np.pi / c.lam * (r(d, x) - c.z0) + c.dPhi[d])
+        vectorized_sum_Im[d] = A(c.X[d]) * np.power(c.z0 / r(d, x), 0.5) * np.sin(2 * np.pi / c.lam * (r(d, x) - c.z0) + c.dPhi[d])
+    return sum_vectorization(vectorized_sum_Re, vectorized_sum_Im)
 
 
 def A(variable):
     if (variable + c.Object / 2.0) <= 10.0 * np.power(10.0, -3):
-        return np.power(np.sin(np.pi / 2 / (10 * np.power(10.,-3)) * (variable + c.Object / 2)), 2)
+        return np.power(np.sin(np.pi / 2 / (10 * np.power(10., -3)) * (variable + c.Object / 2)), 2)
     else:
         if (variable + c.Object / 2.0) >= (c.Object - 10.0 * np.power(10.0, -3)):
             return np.power(np.sin(np.pi / 2 / (10 * np.power(10., -3)) * (variable -  c.Object / 2)), 2)
@@ -76,79 +55,66 @@ else:
 
 print('Results and debug files at:', path)
 debug = open(path+'debug.txt', "w")
+profile = open(path + 'profile.txt', "w")
+dPhi_file = open(path + 'c.dPhi.txt', "w")
+dPhi_init_file = open(path + 'dPhi_init.txt', "w")
 
-n_polyn = np.array([])
-n_polyn_dash = np.array([])
-d_Phi = np.array([])
-with open(c.density_path) as f:
+
+with open(c.density_path, encoding='utf-16') as f:
     for line in f:
         temp_x, temp_y = [float(x) for x in line.split()]
-        x_den = np.append(x_den, c.scaling * temp_x)
-        n_polyn = np.append(n_polyn, 0.039 * temp_y)
+        c.x_den = np.append(c.x_den, c.scaling * temp_x)
+        c.n_polyn = np.append(c.n_polyn, 0.039 * temp_y)
 
 # Vertical step:
-dz = c.Width / c.m
 
-n_polyn = 1 + 2.27 * np.power(10., -4) * n_polyn
-n_dash_polyn = np.diff(n_polyn) / np.diff(x_den)
-n_polyn = inter.interp1d(x_den, n_polyn)
-n_dash_polyn = inter.interp1d(x_den[1:], n_dash_polyn)
 
-X = np.arange(-c.Object / 2., c.Object / 2.0, c.step)
+c.n_polyn = 1 + 2.27 * np.power(10., -4) * c.n_polyn
+c.n_polyn_dash = np.diff(c.n_polyn) / np.diff(c.x_den)
+c.n_polyn = inter.interp1d(c.x_den, c.n_polyn)
+c.n_polyn_dash = inter.interp1d(c.x_den[1:], c.n_polyn_dash)
+
+c.X = np.arange(-c.Object / 2., c.Object / 2.0, c.step)
+dPhi_init = np.zeros(np.size(c.X))
 # this is all the c.Object lightning up, with both JK_left and JK_right
 boundary_index = int((c.Object / 2.0 - c.boundary) / c.step)
-zero_left = np.zeros(boundary_index)
-zero_right = np.zeros(boundary_index)
-x_i_left = np.arange(-c.Object / 2., c.boundary + c.step, c.step)
-x_i_right = np.arange(c.boundary, c.Object / 2.0 + c.step, c.step)
-x_i = np.zeros((np.size(X), c.m + 1))
-z_i = np.zeros((np.size(X), c.m + 1))
-dPhi = np.zeros(np.size(X))
-tg = np.zeros((np.size(X), c.m + 1))
 
 coordinate_dPhi_file = open(path + 'results.dat', "w")
 
-print('Solving shockwave passthroughs')
-for j in tqdm(np.arange(boundary_index, np.size(X)-boundary_index + 1, 1)):
-    x = np.zeros(c.m + 1)
-    tgA = np.zeros(c.m + 1)
-    x_temp = X[j]
-    x[0] = X[j]
-    optic_length = 0
-    tg[j, 0] = X[j] / c.diversity
-    for i in range(1, c.m + 1):
-        tgA[i] = 1 / n_time(x_temp) * n_dash_time(x_temp) * dz
-        tg[j, i] = tgA[i] + tg[j, i - 1]
-        x_temp = x[i - 1] + dz / 2. * tg[j, i]
-        x[i] = x[i - 1] + dz * tg[j, i]
-        optic_length += n_time(x_temp) * np.sqrt(dz * dz + (x[i] - x[i - 1]) * (x[i] - x[i - 1]))
-        x_i[j, i], z_i[j, i] = x[i], -i * dz
-    dPhi[j] = 2 * np.pi * optic_length / 5320 * 1E10
-    coordinate_dPhi_file.write(str(X[j]) + ' ' + str(x_i[j][c.m]) + ' ' + str(dPhi[j]) + '\n')
-    X[j] = x_i[j][c.m]
 
-fig, ax = plt.subplots()
-for j, x0 in enumerate(X):
-    ax.plot(x_i[j], z_i[j])
-ax.set(title='Light trajectories')
-fig.savefig(path + 'light_trajectories.png')
-for j in np.arange(0, boundary_index+1, 1):
-    dPhi[j] = dPhi[boundary_index+2]
-for j in np.arange(np.size(X)-boundary_index, np.size(X), 1):
-    dPhi[j] = dPhi[np.size(X)-boundary_index-2]
 
-fig4,ax4 = plt.subplots()
-ax4.plot(X, dPhi)
-fig4.savefig(path+'dPhi.png')
-#
-#  Mathematica code rewritten:
-#
 
-vectorize_sum_Re = np.zeros(np.size(X))
-vectorize_sum_Im = np.zeros(np.size(X))
+fig0 = plt.figure()
+ax0 = plt.axes(projection='3d')
+ax0.set_xlabel('c.X')
+ax0.set_ylabel('Z')
+
+x = np.arange(-2*c.wave_width,2*c.wave_width, c.step/2)
+z = np.arange(0., c.Object, c.dz)
+Xp,Zp= np.meshgrid(x,z)
+N = np.zeros((np.size(x),np.size(z)))
+for i,x in enumerate(x):
+    for j,y in enumerate(z):
+        N[i][j] = n_curved(x,y)
+ax0.scatter(Xp, Zp, N.transpose())
+plt.show()
+fig0.savefig(path+ 'lanes.png')
+
+
+reference_flag = input("Reference light?[Y/n]")
+if reference_flag == 'n':
+    trajectory = open('refs/'+ 'trajectory.txt', "w")
+    lt.Solve(trajectory)
+else:
+    trajectory = open('refs/'+input("Filename:"), "r")
+    for j,line in enumerate(trajectory):
+        c.X[j], c.dPhi[j] = line.split()
+
+vectorized_sum_Re = np.zeros(np.size(c.X))
+vectorized_sum_Im = np.zeros(np.size(c.X))
 
 intensity_file = open(path + 'intensity.dat', "w")
-xp_range = np.arange(-6E-3, 6E-3, 0.02E-3)
+xp_range = np.arange(-0.03, 0.03, 0.00001) #(-6E-2, 6E-2, 0.2E-3)
 intensity_dat = np.array([])
 print('Summation process')
 
@@ -158,16 +124,17 @@ for xp in tqdm(xp_range):
     intensity_file.write(str(xp) + ' ' + str(intensity)+'\n')
 
 
+
 fig2, ax2 = plt.subplots()
 ax2.plot(xp_range, intensity_dat)
 ax2.set(title='Diffraction')
 fig2.savefig(path + 'Diffraction.png')
 
-A_data = np.copy(X)
-for j,x0 in enumerate(X):
+A_data = np.copy(c.X)
+for j,x0 in enumerate(c.X):
     A_data[j] = A(x0)
 fig3,ax3 = plt.subplots()
-ax3.plot(X, A_data)
+ax3.plot(c.X, A_data)
 fig3.savefig(path+'A.png')
 base.close()
 coordinate_dPhi_file.close()
