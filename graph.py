@@ -23,4 +23,5 @@ for j in range(np.size(results_file)):
 
 y = y/y[:1]
 plt.plot(x,y, color='red')
+
 plt.show()
