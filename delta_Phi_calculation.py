@@ -61,10 +61,10 @@ dPhi_file = open(path + 'c.dPhi.txt', "w")
 dPhi_init_file = open(path + 'dPhi_init.txt', "w")
 
 i = 0
-with open(c.density_path) as f:  # , encoding='utf-16'
+with open(c.density_path, encoding='utf-8-sig') as f:  # , encoding='utf-16'
     for line in f:
         i = i + 1
-        temp_x, temp_y = [float(x) for x in line.split()]
+        temp_x, temp_y = [float(x) for x in line.split( )]
         c.x_den = np.append(c.x_den, c.scaling * temp_x)
         c.n_polyn = np.append(c.n_polyn, 0.039 * temp_y)
 
@@ -95,8 +95,8 @@ for i, x in enumerate(x):
     for j, y in enumerate(z):
         N[i][j] = n_curved(x, y)
 ax0.scatter(Xp, Zp, N.transpose())
-plt.show()
-fig0.savefig(path + 'lanes.png')
+#plt.show()
+#fig0.savefig(path + 'lanes.png')
 
 reference_flag = input("Reference light?[Y/n]")
 if reference_flag == 'n':
@@ -123,14 +123,14 @@ for xp in tqdm(xp_range):
 fig2, ax2 = plt.subplots()
 ax2.plot(xp_range, intensity_dat)
 ax2.set(title='Diffraction')
-fig2.savefig(path + 'Diffraction.png')
+#fig2.savefig(path + 'Diffraction.png')
 
 A_data = np.copy(c.X)
 for j, x0 in enumerate(c.X):
     A_data[j] = A(x0)
 fig3, ax3 = plt.subplots()
 ax3.plot(c.X, A_data)
-fig3.savefig(path + 'A.png')
+#fig3.savefig(path + 'A.png')
 base.close()
 coordinate_dPhi_file.close()
 intensity_file.close()

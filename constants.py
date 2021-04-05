@@ -12,7 +12,7 @@ step = 1E-6
 
 m = 1000
 diversity = 1
-density_path = "/Users/mikhail/Diffraction/NS_density.dat"
+density_path = "NS_density_new_2p2.dat"
 curve = 0
 wave_width = 0.000013
 x_den = np.array([])

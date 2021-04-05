@@ -27,5 +27,5 @@ def Solve(file):
         c.dPhi[j] += 2 * np.pi * optic_length / 5320 * 1E10
         file.write(str(c.x_i[j][c.m]) + ' ' + str(c.dPhi[j]) + '\n')
         c.X[j] = c.x_i[j][c.m]
-        plt.plot(c.x_i[j], c.z_i[j])
-    plt.savefig('5.eps', format='eps')
+        #plt.plot(c.x_i[j], c.z_i[j])
+   # plt.savefig('5.eps', format='eps')

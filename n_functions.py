@@ -3,7 +3,7 @@ import numpy as np
 
 
 def n(x, z):
-    return c.n_polyn(-c.wave_width * c.scaling) if x <= -c.wave_width * c.scaling else c.n_polyn(
+    return c.n_polyn(-c.wave_width * c.scaling) if x<= -c.wave_width * c.scaling else c.n_polyn(
         c.wave_width* c.scaling) if x >= c.wave_width* c.scaling else c.n_polyn(x)
 
 
